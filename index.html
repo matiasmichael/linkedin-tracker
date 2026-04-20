@@ -119,6 +119,7 @@
 <script>
   const BASE = './data';
   const API = 'http://46.101.143.130:8766';
+  const _personas = {};
 
   function initials(name) {
     return (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
@@ -150,14 +151,15 @@
     const grid = document.getElementById('personas-grid');
     try {
       const [personas, stats] = await Promise.all([
-        fetch(BASE + '/personas.json?_=' + Date.now()).then(r => { if (!r.ok) throw new Error('personas ' + r.status); return r.json(); }),
-        fetch(BASE + '/stats.json?_=' + Date.now()).then(r => { if (!r.ok) throw new Error('stats ' + r.status); return r.json(); })
+        fetch(BASE + '/personas.json?_=' + Date.now()).then(r => { if (!r.ok) throw new Error('personas.json ' + r.status); return r.json(); }),
+        fetch(BASE + '/stats.json?_=' + Date.now()).then(r => { if (!r.ok) throw new Error('stats.json ' + r.status); return r.json(); })
       ]);
       document.getElementById('stats-chip').textContent =
         stats.total_personas + ' persona' + (stats.total_personas !== 1 ? 's' : '') +
         ' \u00b7 ' + stats.total_posts + ' posts';
+      personas.forEach(p => _personas[p.username] = p);
       grid.innerHTML = personas.map(p => `
-        <div class="persona-card" onclick="loadPosts('${p.username}', ${JSON.stringify(p).replace(/'/g, '&#39;')})">
+        <div class="persona-card" onclick="loadPosts('${p.username}')">
           <div class="avatar">${initials(p.name)}</div>
           <div class="persona-name">${esc(p.name)}</div>
           <div class="persona-title">${esc(p.title || '')}</div>
@@ -180,15 +182,16 @@
     }
   }
 
-  async function loadPosts(username, persona) {
+  async function loadPosts(username) {
+    const persona = _personas[username] || {};
     document.getElementById('personas-view').style.display = 'none';
     document.getElementById('posts-view').style.display = 'block';
     document.getElementById('person-header').innerHTML = `
-      <div class="avatar" style="width:60px;height:60px;font-size:22px">${initials(persona.name)}</div>
+      <div class="avatar" style="width:60px;height:60px;font-size:22px">${initials(persona.name || username)}</div>
       <div class="person-header-info">
-        <h2>${esc(persona.name)}</h2>
+        <h2>${esc(persona.name || username)}</h2>
         <p>${esc(persona.title || '')}</p>
-        <a href="${persona.linkedin_url}" target="_blank">View LinkedIn &#x2197;</a>
+        <a href="${persona.linkedin_url || '#'}" target="_blank">View LinkedIn &#x2197;</a>
       </div>
       <div class="header-count">
         <strong>${persona.post_count || 0}</strong>
@@ -224,7 +227,7 @@
         `;
       }).join('');
     } catch (e) {
-      list.innerHTML = '<div class="error-msg">Could not load posts. Please try again.<br><small>' + esc(e.message) + '</small></div>';
+      list.innerHTML = '<div class="error-msg">Could not load posts.<br><small>' + esc(e.message) + '</small></div>';
     }
   }
 
@@ -268,14 +271,14 @@
       });
       const data = await resp.json();
       if (data.ok) {
-        setModalStatus((data.message || 'Added!') + ' The page will refresh in 3 seconds.', 'success');
+        setModalStatus((data.message || 'Added!') + ' Refreshing in 3s...', 'success');
         setTimeout(() => { closeModal(); loadPersonas(); }, 3000);
       } else {
         setModalStatus(data.error || 'Something went wrong.', 'error');
         btn.disabled = false;
       }
     } catch (e) {
-      setModalStatus('Could not reach the server. The Add Person feature requires the backend to be running.', 'error');
+      setModalStatus('Could not reach the server. Backend must be running to add personas.', 'error');
       btn.disabled = false;
     }
   }
