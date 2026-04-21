@@ -163,7 +163,7 @@
     </div>
   </div>
   <div id="posts-view">
-    <button class="back-btn" onclick="navigate('/')">&#8592; All profiles</button>
+    <button class="back-btn" id="back-btn">&#8592; All profiles</button>
     <div class="person-header" id="person-header"></div>
     <div class="section-label" id="posts-section-label" style="display:none">Recent Posts</div>
     <div class="posts-list" id="posts-list">
@@ -191,9 +191,13 @@
 </div>
 
 <script>
-  const BASE = './data';
-  const API  = 'http://46.101.143.130:8766';
+  const DATA_BASE = './data';
+  const API = 'http://46.101.143.130:8766';
   const _personas = {};
+
+  // The GH Pages base path for this repo.
+  // All history entries must stay under this prefix.
+  const SITE_BASE = '/linkedin-tracker';
 
   function initials(name) { return (name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
   function timeAgo(ds) {
@@ -212,12 +216,25 @@
   }
 
   // -- Routing --
-  function navigate(path, push=true) {
-    if (push) history.pushState({}, '', path);
-    const m = path.match(/^\/person\/([^/?#]+)/);
+  // Always push/replace full absolute paths like /linkedin-tracker/person/georgekurtz
+  // so refresh works without falling off the base path.
+  function navigate(route, push=true) {
+    // route is a short path like '/' or '/person/georgekurtz'
+    const fullPath = SITE_BASE + (route === '/' ? '/' : route);
+    if (push) history.pushState({}, '', fullPath);
+    const m = route.match(/^\/person\/([^/?#]+)/);
     if (m) renderPostsView(m[1]); else renderPersonasView();
   }
-  window.addEventListener('popstate', () => navigate(location.pathname, false));
+
+  // Translate current absolute pathname back to a short route
+  function currentRoute() {
+    const path = location.pathname;
+    const stripped = path.startsWith(SITE_BASE) ? path.slice(SITE_BASE.length) : path;
+    return stripped || '/';
+  }
+
+  window.addEventListener('popstate', () => navigate(currentRoute(), false));
+  document.getElementById('back-btn').onclick = () => navigate('/');
 
   function renderPersonasView() {
     document.getElementById('personas-view').style.display='block';
@@ -236,8 +253,8 @@
     const grid=document.getElementById('personas-grid');
     try {
       const [personas,stats]=await Promise.all([
-        fetch(BASE+'/personas.json?_='+Date.now()).then(r=>{if(!r.ok)throw new Error('personas '+r.status);return r.json();}),
-        fetch(BASE+'/stats.json?_='+Date.now()).then(r=>{if(!r.ok)throw new Error('stats '+r.status);return r.json();})
+        fetch(DATA_BASE+'/personas.json?_='+Date.now()).then(r=>{if(!r.ok)throw new Error('personas '+r.status);return r.json();}),
+        fetch(DATA_BASE+'/stats.json?_='+Date.now()).then(r=>{if(!r.ok)throw new Error('stats '+r.status);return r.json();})
       ]);
       document.getElementById('stats-chip').textContent=stats.total_personas+' persona'+(stats.total_personas!==1?'s':'')+' \u00b7 '+stats.total_posts+' posts';
       personas.forEach(p=>_personas[p.username]=p);
@@ -258,8 +275,7 @@
           <div style="font-size:12px;margin-top:2px">Add a LinkedIn profile</div>
         </div>`;
       // Route based on current path
-      const m=location.pathname.match(/^\/person\/([^/?#]+)/);
-      if(m) renderPostsView(m[1]); else renderPersonasView();
+      navigate(currentRoute(), false);
     } catch(e) {
       grid.innerHTML=`<div class="error-msg">Failed to load data. Please refresh.<br><small>${esc(e.message)}</small></div>`;
       document.getElementById('stats-chip').textContent='Error';
@@ -286,7 +302,7 @@
     const list=document.getElementById('posts-list');
     list.innerHTML='<div class="loading"><div class="spinner"></div>Loading posts…</div>';
     try {
-      const posts=await fetch(BASE+'/posts/'+username+'.json?_='+Date.now()).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
+      const posts=await fetch(DATA_BASE+'/posts/'+username+'.json?_='+Date.now()).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json();});
       if(!posts.length){list.innerHTML='<div class="empty">No posts yet \u2014 check back after the next scan.</div>';return;}
       list.innerHTML=posts.map((post,i)=>{
         const text=post.text||'',long=text.length>400,repost=/repost|quote/i.test(post.post_type||'');
@@ -329,14 +345,12 @@
   document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
-  // -- GH Pages SPA routing fix --
-  // 404.html redirects /person/X to /?p=%2Fperson%2FX
-  // We restore the real path here, then route accordingly.
+  // -- GH Pages SPA: restore path from 404.html redirect --
+  // 404.html redirects /linkedin-tracker/person/X => /linkedin-tracker/?p=%2Fperson%2FX
   (function(){
-    var qs = location.search;
-    var pParam = qs.match(/[?&]p=([^&]*)/);
+    var pParam = location.search.match(/[?&]p=([^&]*)/);
     if (pParam) {
-      var restored = decodeURIComponent(pParam[1]); // e.g. /person/georgekurtz
+      var restored = SITE_BASE + decodeURIComponent(pParam[1]);
       history.replaceState({}, '', restored);
     }
   })();
