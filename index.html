@@ -195,9 +195,9 @@
   const API = 'http://46.101.143.130:8766';
   const _personas = {};
 
-  // The GH Pages base path for this repo.
-  // All history entries must stay under this prefix.
-  const SITE_BASE = '/linkedin-tracker';
+  // SITE_BASE: empty string when hosted at root (Vercel/custom domain).
+  // Set to '/linkedin-tracker' only for GitHub Pages.
+  const SITE_BASE = '';
 
   function initials(name) { return (name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
   function timeAgo(ds) {
@@ -216,21 +216,16 @@
   }
 
   // -- Routing --
-  // Always push/replace full absolute paths like /linkedin-tracker/person/georgekurtz
-  // so refresh works without falling off the base path.
   function navigate(route, push=true) {
-    // route is a short path like '/' or '/person/georgekurtz'
-    const fullPath = SITE_BASE + (route === '/' ? '/' : route);
+    const fullPath = SITE_BASE + (route || '/');
     if (push) history.pushState({}, '', fullPath);
     const m = route.match(/^\/person\/([^/?#]+)/);
     if (m) renderPostsView(m[1]); else renderPersonasView();
   }
 
-  // Translate current absolute pathname back to a short route
   function currentRoute() {
     const path = location.pathname;
-    const stripped = path.startsWith(SITE_BASE) ? path.slice(SITE_BASE.length) : path;
-    return stripped || '/';
+    return (SITE_BASE && path.startsWith(SITE_BASE)) ? path.slice(SITE_BASE.length) || '/' : path;
   }
 
   window.addEventListener('popstate', () => navigate(currentRoute(), false));
@@ -274,7 +269,6 @@
           <div style="font-weight:700;font-size:14px;color:var(--navy)">Track someone new</div>
           <div style="font-size:12px;margin-top:2px">Add a LinkedIn profile</div>
         </div>`;
-      // Route based on current path
       navigate(currentRoute(), false);
     } catch(e) {
       grid.innerHTML=`<div class="error-msg">Failed to load data. Please refresh.<br><small>${esc(e.message)}</small></div>`;
@@ -344,16 +338,6 @@
   }
   document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
-
-  // -- GH Pages SPA: restore path from 404.html redirect --
-  // 404.html redirects /linkedin-tracker/person/X => /linkedin-tracker/?p=%2Fperson%2FX
-  (function(){
-    var pParam = location.search.match(/[?&]p=([^&]*)/);
-    if (pParam) {
-      var restored = SITE_BASE + decodeURIComponent(pParam[1]);
-      history.replaceState({}, '', restored);
-    }
-  })();
 
   loadPersonas();
 </script>
