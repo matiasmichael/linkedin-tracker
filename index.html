@@ -211,7 +211,7 @@
     return`<div class="avatar" ${st}>${initials(p&&p.name)}</div>`;
   }
 
-  // ── Routing ──
+  // -- Routing --
   function navigate(path, push=true) {
     if (push) history.pushState({}, '', path);
     const m = path.match(/^\/person\/([^/?#]+)/);
@@ -231,7 +231,7 @@
     loadPosts(username);
   }
 
-  // ── Personas ──
+  // -- Personas --
   async function loadPersonas() {
     const grid=document.getElementById('personas-grid');
     try {
@@ -257,7 +257,8 @@
           <div style="font-weight:700;font-size:14px;color:var(--navy)">Track someone new</div>
           <div style="font-size:12px;margin-top:2px">Add a LinkedIn profile</div>
         </div>`;
-      const m=location.pathname.replace(/^\/linkedin-tracker/,'').match(/^\/person\/([^/?#]+)/);
+      // Route based on current path
+      const m=location.pathname.match(/^\/person\/([^/?#]+)/);
       if(m) renderPostsView(m[1]); else renderPersonasView();
     } catch(e) {
       grid.innerHTML=`<div class="error-msg">Failed to load data. Please refresh.<br><small>${esc(e.message)}</small></div>`;
@@ -265,7 +266,7 @@
     }
   }
 
-  // ── Posts ──
+  // -- Posts --
   async function loadPosts(username) {
     const p=_personas[username]||{username};
     document.title=(p.name||username)+' \u2014 LinkedIn Tracker';
@@ -309,7 +310,7 @@
 
   function expand(i,btn){document.getElementById('pt-'+i).classList.remove('collapsed');btn.remove();}
 
-  // ── Modal ──
+  // -- Modal --
   function openModal(){document.getElementById('modal-overlay').classList.add('open');document.getElementById('modal-url').value='';setModalStatus('','');document.getElementById('modal-submit-btn').disabled=false;setTimeout(()=>document.getElementById('modal-url').focus(),60);}
   function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
   function setModalStatus(msg,type){const el=document.getElementById('modal-status');el.textContent=msg;el.className='modal-status'+(type?' '+type:'');}
@@ -328,10 +329,16 @@
   document.getElementById('modal-overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 
-  // ── GH Pages path fix: strip /linkedin-tracker prefix ──
+  // -- GH Pages SPA routing fix --
+  // 404.html redirects /person/X to /?p=%2Fperson%2FX
+  // We restore the real path here, then route accordingly.
   (function(){
-    const raw=location.pathname.replace(/^\/linkedin-tracker/,'')||'/';
-    if(raw!==location.pathname)history.replaceState({},'',raw);
+    var qs = location.search;
+    var pParam = qs.match(/[?&]p=([^&]*)/);
+    if (pParam) {
+      var restored = decodeURIComponent(pParam[1]); // e.g. /person/georgekurtz
+      history.replaceState({}, '', restored);
+    }
   })();
 
   loadPersonas();
