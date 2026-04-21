@@ -1,13 +1,14 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
-    { "source": "/person/:username", "destination": "/index.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/person/:username", "destination": "/index.html" }
   ],
   "headers": [
     {
       "source": "/data/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "s-maxage=300, stale-while-revalidate" }
+        { "key": "Cache-Control", "value": "s-maxage=60, stale-while-revalidate" }
       ]
     }
   ]
