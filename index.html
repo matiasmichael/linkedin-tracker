@@ -191,12 +191,9 @@
 </div>
 
 <script>
-  const DATA_BASE = './data';
+  const DATA_BASE = '/data';
   const API = 'http://46.101.143.130:8766';
   const _personas = {};
-
-  // SITE_BASE: empty string when hosted at root (Vercel/custom domain).
-  // Set to '/linkedin-tracker' only for GitHub Pages.
   const SITE_BASE = '';
 
   function initials(name) { return (name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
@@ -215,7 +212,6 @@
     return`<div class="avatar" ${st}>${initials(p&&p.name)}</div>`;
   }
 
-  // -- Routing --
   function navigate(route, push=true) {
     const fullPath = SITE_BASE + (route || '/');
     if (push) history.pushState({}, '', fullPath);
@@ -243,7 +239,6 @@
     loadPosts(username);
   }
 
-  // -- Personas --
   async function loadPersonas() {
     const grid=document.getElementById('personas-grid');
     try {
@@ -276,7 +271,6 @@
     }
   }
 
-  // -- Posts --
   async function loadPosts(username) {
     const p=_personas[username]||{username};
     document.title=(p.name||username)+' \u2014 LinkedIn Tracker';
@@ -320,7 +314,6 @@
 
   function expand(i,btn){document.getElementById('pt-'+i).classList.remove('collapsed');btn.remove();}
 
-  // -- Modal --
   function openModal(){document.getElementById('modal-overlay').classList.add('open');document.getElementById('modal-url').value='';setModalStatus('','');document.getElementById('modal-submit-btn').disabled=false;setTimeout(()=>document.getElementById('modal-url').focus(),60);}
   function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
   function setModalStatus(msg,type){const el=document.getElementById('modal-status');el.textContent=msg;el.className='modal-status'+(type?' '+type:'');}
