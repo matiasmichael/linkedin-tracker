@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>LinkedIn Tracker — Clarity</title>
+  <script>
+    // GitHub Pages SPA redirect trick.
+    // Converts /linkedin-tracker/person/georgekurtz
+    // into    /linkedin-tracker/?/person/georgekurtz
+    // so index.html can restore the route.
+    var seg = 1; // number of path segments to keep as base (1 = /linkedin-tracker)
+    var l = window.location;
+    var base = l.pathname.split('/').slice(0, 1 + seg).join('/');
+    var rest = l.pathname.slice(base.length) || '/';
+    var redirect = base + '/?p=' + encodeURIComponent(rest) +
+      (l.search ? '&q=' + encodeURIComponent(l.search.slice(1)) : '') +
+      l.hash;
+    l.replace(redirect);
+  </script>
+</head>
+<body></body>
+</html>
