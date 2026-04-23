@@ -1,1 +1,47 @@
-[{"url":"https://www.linkedin.com/posts/kaarelkotkas_when-was-the-last-time-your-strong-accent-activity-7449805711137501185-a-FL","text":"When was the last time your strong accent saved you? Andrea Rozenberg got an urgent message from 'me' — it was a real-time deepfake.","posted_at":"2026-04-14 15:08:12","post_type":"regular","reactions":396,"comments":17,"reposts":7},{"url":"https://www.linkedin.com/posts/kaarelkotkas_kyb-is-broken-its-friction-for-users-and-activity-7425187765320835073-V6AS","text":"KYB is broken. We're going to rebuild it. Veriff acquired Vespia.","posted_at":"2026-02-05 15:45:16","post_type":"regular","reactions":241,"comments":17,"reposts":7},{"url":"https://www.linkedin.com/posts/kaarelkotkas_the-gartner-tax-is-dead-people-used-to-activity-7423158789832560640-aIx0","text":"The 'Gartner Tax' is dead.","posted_at":"2026-01-31 01:22:51","post_type":"regular","reactions":219,"comments":42,"reposts":4},{"url":"https://www.linkedin.com/posts/kaarelkotkas_every-christmas-season-when-were-all-together-activity-7405951335319457793-x719","text":"Every Christmas season when we're all together, it's also time to help your parents out with upgrades.","posted_at":"2025-12-14 13:46:34","post_type":"regular","reactions":108,"comments":7,"reposts":0},{"url":"https://www.linkedin.com/posts/kaarelkotkas_you-know-that-itchy-feeling-inside-you-cant-activity-7404983960834904064-WGSz","text":"You know that itchy feeling inside you can't scratch? Veriff 2025 wrap-up.","posted_at":"2025-12-11 21:42:34","post_type":"regular","reactions":410,"comments":11,"reposts":15}]
+[
+  {
+    "url": "https://www.linkedin.com/posts/kaarelkotkas_when-was-the-last-time-your-strong-accent-activity-7449805711137501185-a-FL",
+    "text": "When was the last time your strong accent saved you? A deepfaked video of me tried to scam our team — the Estonian accent was missing, giving it away.",
+    "posted_at": "2026-04-14 15:08:12",
+    "post_type": "regular",
+    "reactions": 396,
+    "comments": 17,
+    "reposts": 7
+  },
+  {
+    "url": "https://www.linkedin.com/posts/kaarelkotkas_kyb-is-broken-its-friction-for-users-and-activity-7425187765320835073-V6AS",
+    "text": "KYB is broken. Veriff acquired Vespia to rebuild it from scratch — 10x better, 2-5x cheaper.",
+    "posted_at": "2026-02-05 15:45:16",
+    "post_type": "regular",
+    "reactions": 241,
+    "comments": 17,
+    "reposts": 7
+  },
+  {
+    "url": "https://www.linkedin.com/posts/kaarelkotkas_the-gartner-tax-is-dead-people-used-to-activity-7423158789832560640-aIx0",
+    "text": "The 'Gartner Tax' is dead. Invest in R&D — the best product always wins.",
+    "posted_at": "2026-01-31 01:22:51",
+    "post_type": "regular",
+    "reactions": 219,
+    "comments": 42,
+    "reposts": 4
+  },
+  {
+    "url": "https://www.linkedin.com/posts/kaarelkotkas_every-christmas-season-when-were-all-together-activity-7405951335319457793-x719",
+    "text": "My father's iPhone Face ID opened with my face — clear example that Face ID is UX, not real identity verification.",
+    "posted_at": "2025-12-14 13:46:34",
+    "post_type": "regular",
+    "reactions": 108,
+    "comments": 7,
+    "reposts": 0
+  },
+  {
+    "url": "https://www.linkedin.com/posts/kaarelkotkas_you-know-that-itchy-feeling-inside-you-cant-activity-7404983960834904064-WGSz",
+    "text": "Veriff tripled volumes, doubled revenue while profitable in 2025. 400M+ people verified.",
+    "posted_at": "2025-12-11 21:42:34",
+    "post_type": "regular",
+    "reactions": 410,
+    "comments": 11,
+    "reposts": 15
+  }
+]
